@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import { token } from './token';
 import './App.css';
 
 class App extends Component {
@@ -13,13 +15,23 @@ class App extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    console.log(`you submitted: ${this.state.marketName}`);
+    const options = { headers: { Authorization: `Bearer ${token}` } };
+    axios.post('/markets', options)
+      .then(res => console.log('BODY -->', res))
+      .catch(err => console.log('ERROR -->', err));
+  }
+
+  getMarkets = () => {
+    axios.get('/markets', { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => console.log('BODY -->', res))
+      .catch(err => console.log('ERROR -->', err));
   }
 
   render() {
     return (
       <div>
         <h3>Create a Market</h3>
+        <button onClick={this.getMarkets}>Get Markets</button>
         <form onSubmit={this.handleSubmit}>
           <input type="text" name="name" placeholder="Market Name" onChange={this.handleChange} />
           <input type="submit" name="confirm" value="Confirm" />
@@ -28,8 +40,5 @@ class App extends Component {
     );
   }
 }
-
-// token:
-// Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwZXJtaXNzaW9ucyI6eyJ1c2VySWQiOiJiMzg2YzNlNy0xYmZkLTRiMGYtODFlYi01MjU2NDg1M2I3ZmIiLCJ1c2VyVHlwZSI6ImFkbWluIiwibWFya2V0SWQiOiJhZGFlMmNlZi0wOWEwLTQ3MjYtOTZhNS00MDE3YTI4MzA2ZTMifSwiZXhwIjoxNTM5NzgwODEwLCJpYXQiOjE1MjQwNjMzMTl9.y4XCxyx6HGF8g9LeNaz-CGOGoPDza6rcB-LzIMPTC3I
 
 export default App;
