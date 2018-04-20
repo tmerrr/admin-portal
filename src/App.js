@@ -15,15 +15,23 @@ class App extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const options = { headers: { Authorization: `Bearer ${token}` } };
-    axios.post('/markets', options)
+    const headers = { Authorization: `Bearer ${token}` };
+    const body = { name: this.state.marketName };
+
+    axios({
+      method: 'post',
+      headers,
+      url: '/markets',
+      data: body
+    })
       .then(res => console.log('BODY -->', res))
       .catch(err => console.log('ERROR -->', err));
   }
 
   getMarkets = () => {
-    axios.get('/markets', { headers: { Authorization: `Bearer ${token}` } })
-      .then(res => console.log('BODY -->', res))
+    const headers = { Authorization: `Bearer ${token}` };
+    axios.get('/markets', { headers })
+      .then(res => console.log('DATA -->', res.data))
       .catch(err => console.log('ERROR -->', err));
   }
 
