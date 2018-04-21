@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { token } from './token';
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { marketName: '' };
+    this.state = {
+      hasToken: false,
+      token: null,
+      marketName: ''
+    };
   }
 
-  handleChange = (event) => {
+  changeMarketName = (event) => {
     this.setState({ marketName: event.target.value });
   }
 
-  handleSubmit = (event) => {
+  submitMarket = (event) => {
     event.preventDefault();
-    const headers = { Authorization: `Bearer ${token}` };
+    const headers = { Authorization: `Bearer ${this.state.token}` };
     const body = { name: this.state.marketName };
 
     axios({
@@ -29,23 +32,49 @@ class App extends Component {
   }
 
   getMarkets = () => {
-    const headers = { Authorization: `Bearer ${token}` };
+    const headers = { Authorization: `Bearer ${this.state.token}` };
     axios.get('/markets', { headers })
       .then(res => console.log('DATA -->', res.data))
       .catch(err => console.log('ERROR -->', err));
   }
 
-  render() {
+  renderMarketForm = () => {
     return (
       <div>
         <h3>Create a Market</h3>
         <button onClick={this.getMarkets}>Get Markets</button>
-        <form onSubmit={this.handleSubmit}>
-          <input type="text" name="name" placeholder="Market Name" onChange={this.handleChange} />
-          <input type="submit" name="confirm" value="Confirm" />
+        <form onSubmit={this.submitMarket}>
+          <input type="text" name="name" placeholder="Market Name" onChange={this.changeMarketName} />
+          <input type="submit" name="confirmName" value="Confirm" />
         </form>
       </div>
     );
+  }
+
+  updateToken = (event) => {
+    this.setState({ token: event.target.value });
+  }
+
+  submitToken = (event) => {
+    event.preventDefault();
+    this.setState({ hasToken: true });
+  }
+
+  renderTokenForm = () => {
+    return (
+      <div>
+        <h3>Please Enter Your Token</h3>
+        <form onSubmit={this.submitToken}>
+          <input type="text" name="token" placeholder="Enter Token" onChange={this.updateToken} />
+          <input type ="submit" name="confirmToken" />
+        </form>
+      </div>
+    );
+  }
+
+  render() {
+    const form = this.state.hasToken ? this.renderMarketForm() : this.renderTokenForm();
+    return form;
   }
 }
 
