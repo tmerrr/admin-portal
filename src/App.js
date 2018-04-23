@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
+import TokenForm from './TokenForm';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hasToken: false,
       token: null,
       marketName: '',
       markets: []
@@ -60,29 +60,12 @@ class App extends Component {
     );
   }
 
-  updateToken = (event) => {
-    this.setState({ token: event.target.value });
-  }
-
-  submitToken = (event) => {
-    event.preventDefault();
-    this.setState({ hasToken: true });
-  }
-
-  renderTokenForm = () => {
-    return (
-      <div>
-        <h3>Please Enter Your Token</h3>
-        <form onSubmit={this.submitToken}>
-          <input type="text" name="token" placeholder="Enter Token" onChange={this.updateToken} />
-          <input type ="submit" name="confirmToken" />
-        </form>
-      </div>
-    );
+  submitToken = (token) => {
+    this.setState({ token });
   }
 
   render() {
-    const form = this.state.hasToken ? this.renderMarketForm() : this.renderTokenForm();
+    const form = this.state.token ? this.renderMarketForm() : <TokenForm submitToken={this.submitToken} />
     return form;
   }
 }
