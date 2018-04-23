@@ -8,7 +8,8 @@ class App extends Component {
     this.state = {
       hasToken: false,
       token: null,
-      marketName: ''
+      marketName: '',
+      markets: []
     };
   }
 
@@ -27,14 +28,22 @@ class App extends Component {
       url: '/markets',
       data: body
     })
-      .then(res => console.log('BODY -->', res))
+      .then(res => {
+        console.log('DATA -->', res.data);
+        const markets = this.state.markets.slice();
+        markets.push(res.data);
+        this.setState({ markets });
+      })
       .catch(err => console.log('ERROR -->', err));
   }
 
   getMarkets = () => {
     const headers = { Authorization: `Bearer ${this.state.token}` };
     axios.get('/markets', { headers })
-      .then(res => console.log('DATA -->', res.data))
+      .then((res) => {
+        console.log('DATA -->', res.data);
+        this.setState({ markets: res.data });
+      })
       .catch(err => console.log('ERROR -->', err));
   }
 
