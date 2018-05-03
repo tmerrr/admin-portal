@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
+import Market from './Market';
 import TokenForm from './TokenForm';
 
 class App extends Component {
@@ -19,30 +20,31 @@ class App extends Component {
 
   submitMarket = (event) => {
     event.preventDefault();
-    const headers = { Authorization: `Bearer ${this.state.token}` };
-    const body = { name: this.state.marketName };
-
-    axios({
+    const options = {
       method: 'post',
-      headers,
+      headers: { Authorization: `Bearer ${this.state.token}` },
       url: '/markets',
-      data: body
-    })
-      .then(res => {
-        console.log('DATA -->', res.data);
+      data: { name: this.state.marketName }
+    };
+
+    axios(options)
+      .then((res) => {
+        const market = <Market marketId={res.data.id} name={res.data.name} />
         const markets = this.state.markets.slice();
-        markets.push(res.data);
+        markets.push(market);
         this.setState({ markets });
       })
       .catch(err => console.log('ERROR -->', err));
   }
 
   getMarkets = () => {
-    const headers = { Authorization: `Bearer ${this.state.token}` };
-    axios.get('/markets', { headers })
+    const options = {
+      headers: { Authorization: `Bearer ${this.state.token}` }
+    };
+    axios.get('/markets', options)
       .then((res) => {
-        console.log('DATA -->', res.data);
-        this.setState({ markets: res.data });
+        const markets = res.data.map(m => <Market marketId={m.id} name={m.name} />);
+        this.setState({ markets: markets });
       })
       .catch(err => console.log('ERROR -->', err));
   }
@@ -56,6 +58,9 @@ class App extends Component {
           <input type="text" name="name" placeholder="Market Name" onChange={this.changeMarketName} />
           <input type="submit" name="confirmName" value="Confirm" />
         </form>
+        <div>
+          {this.state.markets}
+        </div>
       </div>
     );
   }
